@@ -50,5 +50,4 @@ unknown_bytes = b64decode(b64_cipher)
 blocksize = get_blocksize_of_oracle()
 
 print("Blocksize: " + str(blocksize))
-print("Decrypted message: ")
-print(break_cipher(unknown_bytes, blocksize).decode('utf-8'))
+print("Decrypted message: \n" + break_cipher(unknown_bytes, blocksize).decode('utf-8'))
