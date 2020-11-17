@@ -1,10 +1,8 @@
-def pad_pkcs7(b, target_length):
-    delta = target_length - (len(b) % target_length)
-    if(len(b) - delta != 0):
-        return b + bytes(delta * [delta])
-    return b
+def pad_pkcs7(plaintext, blocksize = 16):
+    delta = blocksize - (len(plaintext) % blocksize)
+    return plaintext + bytes(delta * [delta])
 
-'''
+
 def unpad_pkcs7(b):
     bArr = bytearray(b)
     padding = bArr[-1]
@@ -13,8 +11,10 @@ def unpad_pkcs7(b):
             return b
     del bArr[len(bArr) - padding:]
     return bytes(bArr)
-'''
+
 
 plaintext = b'YELLOW SUBMARINE'
 
-print(pad_pkcs7(plaintext, 20))
+print("Plaintext: " + str(plaintext))
+print("Padded: " + str(pad_pkcs7(plaintext, 20)))
+print("Unpadded: " + str(unpad_pkcs7(pad_pkcs7(plaintext, 20))))
