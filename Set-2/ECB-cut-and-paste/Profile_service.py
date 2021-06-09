@@ -14,17 +14,16 @@ class Profile_service:
 
 
     def __unpad_pkcs7(self, msg: bytes, blocksize=16) -> str:
-        if len(msg) == 0 or len(msg) % 16 != 0 or msg[-1] not in range(1, blocksize + 1):
+        if len(msg) == 0 or len(msg) % 16 != 0 or not (1 <= msg[-1] <= blocksize) or not all(i == msg[-1] for i in msg[-msg[-1] : ]):
             raise ValueError("Data is not padded using valid pkcs7!")
-        padding = msg[-1]
-        return msg[ : -padding].decode()
+        return msg[ : -msg[-1]].decode()
 
 
     def profile_for(self, email: str) -> str:
         email = re.compile("[&=]").sub("", email)
         profile = f"email={email}&uid=10&role=user"
         enc = AES.new(self.secret_key, AES.MODE_ECB).encrypt(
-            self.__pad_pkcs7(bytearray(profile, "utf-8"))
+            self.__pad_pkcs7(bytes(profile, "utf-8"))
         )
         return b64encode(enc)
 
@@ -34,10 +33,3 @@ class Profile_service:
             b64decode(encrypted_profile)
         ))
         return {k : v for k, v in map(lambda kv: kv.split("="), decrypted.split("&"))}
-
-
-service = Profile_service()
-enc = service.profile_for("jiwaaaf")
-print("b64_enc:", enc)
-print("enc:", b64decode(enc))
-print("decrypted:", service.parse_profile(enc))
