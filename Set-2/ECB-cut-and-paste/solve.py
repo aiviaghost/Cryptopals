@@ -27,12 +27,17 @@ We can then carefully choose our email (whatever field you control, could
 be username in another challenge) so that the plaintext ends with "role=". 
 We then craft another plaintext containg the word "admin" and we make sure 
 to include valid PKCS#7 padding after "admin". 
+
+Note:
+Profiles can be crafted with pretty much arbitrary emails + roles, 
+it just requires more fiddling with the block alignments. 
 """
 
 service = Profile_service()
 
 
-user_1 = service.profile_for("a" * 13)
+# user_1 = service.profile_for("a" * 13)
+user_1 = service.profile_for("abc@gmail.com")
 aligned = b64decode(user_1)[ : 32]
 
 
@@ -43,4 +48,4 @@ admin_padding = b64decode(user_2)[16 : 32]
 crafted_user = b64encode(aligned + admin_padding)
 
 print(f"Crafted admin profile: {service.parse_profile(crafted_user)}")
-# {'email': 'aaaaaaaaaaaaa', 'uid': '10', 'role': 'admin'}
+# {'email': 'abc@gmail.com', 'uid': '10', 'role': 'admin'}
