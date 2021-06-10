@@ -13,7 +13,7 @@ class Profile_service:
         return msg + bytes([pad] * pad)
 
 
-    def __unpad_pkcs7(self, msg: bytes, blocksize=16) -> str:
+    def __unpad_pkcs7(self, msg: bytes, blocksize = 16) -> str:
         if len(msg) == 0 or len(msg) % 16 != 0 or not (1 <= msg[-1] <= blocksize) or not all(i == msg[-1] for i in msg[-msg[-1] : ]):
             raise ValueError("Data is not padded using valid pkcs7!")
         return msg[ : -msg[-1]].decode()
