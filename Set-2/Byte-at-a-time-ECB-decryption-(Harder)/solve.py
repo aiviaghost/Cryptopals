@@ -65,7 +65,7 @@ def create_lookup(known_bytes):
     return lookup
 
 
-# You can figure out the FLAG length exactly the same way that you figure out the length of the prefix, at least once you know the length of the prefix. 
+# You can figure out the FLAG length once you know the length of the prefix (+ some padding at the end)
 FLAG_SIZE_UPPER_BOUND = 1000 # I'm a little lazy
 FLAG = b""
 for i in range(0, FLAG_SIZE_UPPER_BOUND, BLOCKSIZE):
