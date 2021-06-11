@@ -20,7 +20,7 @@
     * [x] ECB cut-and-paste
     * [x] Byte-at-a-time ECB decryption (Harder)
     * [x] PKCS#7 padding validation
-    * [ ] CBC bitflipping attacks
+    * [x] CBC bitflipping attacks
 
 * [ ] Set 3
     * [ ] The CBC padding oracle
