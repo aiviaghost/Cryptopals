@@ -12,7 +12,7 @@
     * [x] AES in ECB mode
     * [x] Detect AES in ECB mode
 
-- [ ] Set 2
+- [x] Set 2
     * [x] Implement PKCS#7 padding
     * [x] Implement CBC mode
     * [x] An ECB/CBC detection oracle
