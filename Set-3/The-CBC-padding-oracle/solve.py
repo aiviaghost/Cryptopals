@@ -1,6 +1,4 @@
-from Crypto.Cipher.AES import new
 from Encryption_service import Encryption_service
-from pprint import pprint
 
 """
 Solution:

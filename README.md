@@ -23,7 +23,7 @@
     * [x] CBC bitflipping attacks
 
 * [ ] Set 3
-    * [ ] The CBC padding oracle
+    * [x] The CBC padding oracle
     * [ ] Implement CTR, the stream cipher mode
     * [ ] Break fixed-nonce CTR mode using substitutions
     * [ ] Break fixed-nonce CTR statistically
