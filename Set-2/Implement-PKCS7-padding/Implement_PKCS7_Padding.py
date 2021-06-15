@@ -3,8 +3,9 @@ def pad_pkcs7(plaintext: bytes, blocksize = 16) -> bytes:
     return plaintext + bytes(delta * [delta])
 
 
+# Not sure if the empty string is considered valid or not
 def unpad_pkcs7(msg: bytes, blocksize = 16) -> bytes:
-    if len(msg) == 0 or len(msg) % blocksize != 0 or not (1 <= msg[-1] <= blocksize) or not all(i == msg[-1] for i in msg[-msg[-1] : ]):
+    if len(msg) % blocksize != 0 or not (1 <= msg[-1] <= blocksize) or not all(i == msg[-1] for i in msg[-msg[-1] : ]):
         raise ValueError("Data is not padded using valid pkcs7!")
     return msg[ : -msg[-1]]
 

@@ -4,27 +4,29 @@ from Crypto.Cipher import AES
 
 
 class Encryption_service:
-    __BLOCKSIZE = 16
-    __SECRET_KEY = secrets.token_bytes(__BLOCKSIZE)
-    __STRINGS = list(map(b64decode, [
-        b"MDAwMDAwTm93IHRoYXQgdGhlIHBhcnR5IGlzIGp1bXBpbmc=", 
-        b"MDAwMDAxV2l0aCB0aGUgYmFzcyBraWNrZWQgaW4gYW5kIHRoZSBWZWdhJ3MgYXJlIHB1bXBpbic=", 
-        b"MDAwMDAyUXVpY2sgdG8gdGhlIHBvaW50LCB0byB0aGUgcG9pbnQsIG5vIGZha2luZw==", 
-        b"MDAwMDAzQ29va2luZyBNQydzIGxpa2UgYSBwb3VuZCBvZiBiYWNvbg==", 
-        b"MDAwMDA0QnVybmluZyAnZW0sIGlmIHlvdSBhaW4ndCBxdWljayBhbmQgbmltYmxl", 
-        b"MDAwMDA1SSBnbyBjcmF6eSB3aGVuIEkgaGVhciBhIGN5bWJhbA==", 
-        b"MDAwMDA2QW5kIGEgaGlnaCBoYXQgd2l0aCBhIHNvdXBlZCB1cCB0ZW1wbw==", 
-        b"MDAwMDA3SSdtIG9uIGEgcm9sbCwgaXQncyB0aW1lIHRvIGdvIHNvbG8=", 
-        b"MDAwMDA4b2xsaW4nIGluIG15IGZpdmUgcG9pbnQgb2g=", 
-        b"MDAwMDA5aXRoIG15IHJhZy10b3AgZG93biBzbyBteSBoYWlyIGNhbiBibG93"
-    ]))
+    def __init__(self):
+        self.__BLOCKSIZE = 16
+        self.__SECRET_KEY = secrets.token_bytes(self.__BLOCKSIZE)
+        self.__STRINGS = list(map(b64decode, [
+            b"MDAwMDAwTm93IHRoYXQgdGhlIHBhcnR5IGlzIGp1bXBpbmc=", 
+            b"MDAwMDAxV2l0aCB0aGUgYmFzcyBraWNrZWQgaW4gYW5kIHRoZSBWZWdhJ3MgYXJlIHB1bXBpbic=", 
+            b"MDAwMDAyUXVpY2sgdG8gdGhlIHBvaW50LCB0byB0aGUgcG9pbnQsIG5vIGZha2luZw==", 
+            b"MDAwMDAzQ29va2luZyBNQydzIGxpa2UgYSBwb3VuZCBvZiBiYWNvbg==", 
+            b"MDAwMDA0QnVybmluZyAnZW0sIGlmIHlvdSBhaW4ndCBxdWljayBhbmQgbmltYmxl", 
+            b"MDAwMDA1SSBnbyBjcmF6eSB3aGVuIEkgaGVhciBhIGN5bWJhbA==", 
+            b"MDAwMDA2QW5kIGEgaGlnaCBoYXQgd2l0aCBhIHNvdXBlZCB1cCB0ZW1wbw==", 
+            b"MDAwMDA3SSdtIG9uIGEgcm9sbCwgaXQncyB0aW1lIHRvIGdvIHNvbG8=", 
+            b"MDAwMDA4b2xsaW4nIGluIG15IGZpdmUgcG9pbnQgb2g=", 
+            b"MDAwMDA5aXRoIG15IHJhZy10b3AgZG93biBzbyBteSBoYWlyIGNhbiBibG93",
+        ]))
 
     def __pad_pkcs7(self, msg: bytes) -> bytes:
         pad = self.__BLOCKSIZE - len(msg) % self.__BLOCKSIZE
         return msg + bytes([pad] * pad)
 
+    # I am too lazy to actually read the entire PKCS#7 specification but it might be the case that an empty string is considered invalid, I don't though
     def __unpad_pkcs7(self, msg: bytes) -> bytes:
-        if len(msg) == 0 or len(msg) % self.__BLOCKSIZE != 0 or not (1 <= msg[-1] <= self.__BLOCKSIZE) or not all(i == msg[-1] for i in msg[-msg[-1] : ]):
+        if len(msg) % self.__BLOCKSIZE != 0 or not (1 <= msg[-1] <= self.__BLOCKSIZE) or not all(i == msg[-1] for i in msg[-msg[-1] : ]):
             raise ValueError("Data is not padded using valid PKCS#7!")
         return msg[ : -msg[-1]]
 
@@ -36,7 +38,7 @@ class Encryption_service:
         )
         return (enc, iv)
     
-    def decryption_oracle(self, cipher) -> bool:
+    def decryption_oracle(self, cipher: bytes) -> bool:
         enc, iv = cipher
         try:
             self.__unpad_pkcs7(AES.new(self.__SECRET_KEY, AES.MODE_CBC, iv).decrypt(enc))
