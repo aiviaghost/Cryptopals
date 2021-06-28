@@ -52,7 +52,7 @@ A similar construction can be found for left-shifts (The zeros will start from t
 We also have to loop over the bits in the correct direction since for left shifts the zeros will be to the right and for right 
 shifts the will be to the left. See the implementation below for an example of how this can be achieved. 
 
-It should also be noted the reason this operation is reversible is, in addition to xor itself being reversible, the fact that we 
+It should also be noted the reason this operation is reversible, in addition to xor itself being reversible, is the fact that we 
 get these zeros after the bit shifting. Given any number N the result of N & 0 is always N so this allows us to recover parts of x. 
 These parts of x then form the base case for the recursion step to work (y[i] = ...x[i + S]...). 
 
