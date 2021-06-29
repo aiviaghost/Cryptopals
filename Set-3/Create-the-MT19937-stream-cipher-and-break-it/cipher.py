@@ -2,6 +2,8 @@ from MT19937 import MT19937
 
 
 class MT_Cipher:
+    __8_bit_mask = 2 ** 8 - 1
+
     def __init__(self, seed: int):
         assert(len(bin(seed)[2 : ]) <= 16)
         self.__PRNG = MT19937(seed)
@@ -11,7 +13,7 @@ class MT_Cipher:
 
     def __keystream_generator(self):
         while True:
-            yield from self.__PRNG.extract_number().to_bytes(4, byteorder="little")
+            yield self.__PRNG.extract_number() & self.__8_bit_mask
     
     def transform(self, msg: bytes) -> bytes:
         keystream = self.__keystream_generator()
