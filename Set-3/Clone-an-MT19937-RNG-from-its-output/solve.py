@@ -54,7 +54,7 @@ shifts the will be to the left. See the implementation below for an example of h
 
 It should also be noted the reason this operation is reversible, in addition to xor itself being reversible, is the fact that we 
 get these zeros after bit shifting. Given any number N the result of N & 0 is always 0 so x[i] ^ (M[i] & 0) = x[i]. 
-These parts of x then form the base case for the recursion step to work (y[i] = ...x[i + S]...). 
+These parts of x then form the base case for the recursion step to work (x[i] = ...x[i + S]...). 
 
 Using this formula we can recover the entire state of the PRNG given 624 of its outputs, because the state vector's length is 624. 
 """
