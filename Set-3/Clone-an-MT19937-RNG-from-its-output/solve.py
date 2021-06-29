@@ -26,12 +26,12 @@ Let's see what one of these operations look like on a bit-level:
 Let var[i] denote the ith bit of the variable var and w be the bit-size of the numbers (w = 32 for MT19937). 
 We then get the following for a right-shift: 
     
-        <--S-->
-        0 ... 0 x[w] x[w - 1] ... x[S]
-    &   M[w]....M[w-S] M[w-S-1]...M[0]
-    ^   x[w]....x[w-S] x[w-S-1]...x[0]
-    ----------------------------------
-        y[w]....y[w-S] y[w-S-1]...y[0]
+        <----S--->
+        0  ....  0             x[w]     x[w - 1]   ...   x[S]
+    &   M[w] ... M[w - S + 1]  M[w - S] M[w - S - 1] ... M[0]
+    ^   x[w] ... x[w - S + 1]  x[w - S] x[w - S - 1] ... x[0]
+    ---------------------------------------------------------
+    y = y[w] ... y[w - S + 1]  y[w - S] y[w - S - 1] ... y[0]
 
 We can write this more formally as:
 
@@ -53,7 +53,17 @@ We also have to loop over the bits in the correct direction since for left shift
 shifts the will be to the left. See the implementation below for an example of how this can be achieved. 
 
 It should also be noted the reason this operation is reversible, in addition to xor itself being reversible, is the fact that we 
-get these zeros after bit shifting. Given any number N the result of N & 0 is always 0 so x[i] ^ (M[i] & 0) = x[i]. 
+get these zeros after bit shifting. Given any number N the result of N & 0 and is always 0 and N ^ 0 is N so x[i] ^ (M[i] & 0) = x[i]. 
+We can modify the table above with this knowledge in mind like so:
+
+        <----S--->
+        0  ....  0             x[w]     x[w - 1]   ...   x[S]
+    &   M[w] ... M[w - S + 1]  M[w - S] M[w - S - 1] ... M[0]
+    ^   x[w] ... x[w - S + 1]  x[w - S] x[w - S - 1] ... x[0]
+    ---------------------------------------------------------
+    y = x[w] ... x[w - S + 1]  y[w - S] y[w - S - 1] ... y[0]
+
+Notice the first S bits of y are actually the same as the bits in x. 
 These parts of x then form the base case for the recursion step to work (x[i] = ...x[i + S]...). 
 
 Using this formula we can recover the entire state of the PRNG given 624 of its outputs, because the state vector's length is 624. 
