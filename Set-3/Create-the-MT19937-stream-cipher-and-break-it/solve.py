@@ -1,19 +1,19 @@
-from MT19937 import MT19937
 from cipher import MT_Cipher
-from MT19937 import MT19937
+from secrets import token_bytes, randbelow, randbits
 
-seed = 1234
 
-cipher = MT_Cipher(seed)
+known_plaintext = b"A" * 14
+plaintext = token_bytes(randbelow(32)) + known_plaintext
+seed = randbits(16)
+encrypted = MT_Cipher(seed).transform(plaintext)
 
-msg = b"hello there!"
-
-enc = cipher.transform(msg)
-
-print(msg, enc)
-
-dec = MT_Cipher(seed).transform(enc)
-
-assert(dec == msg)
-
-print(dec)
+for possible_seed in range(2 ** 16):
+    print(possible_seed)
+    decrypted = MT_Cipher(possible_seed).transform(encrypted)
+    if known_plaintext in decrypted:
+        assert(possible_seed == seed)
+        assert(decrypted == plaintext)
+        print(f"Decrypted text: {decrypted}")
+        break
+else:
+    print("Failed to recover seed and plaintext!")

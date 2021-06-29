@@ -30,7 +30,7 @@
     * [x] Implement the MT19937 Mersenne Twister RNG
     * [x] Crack an MT19937 seed
     * [x] Clone an MT19937 RNG from its output
-    * [ ] Create the MT19937 stream cipher and break it
+    * [x] Create the MT19937 stream cipher and break it
 
 - [ ] Set 4
     * [ ] Break "random access read/write" AES CTR
