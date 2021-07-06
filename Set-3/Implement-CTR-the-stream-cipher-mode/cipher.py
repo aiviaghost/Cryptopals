@@ -3,7 +3,13 @@ from Crypto.Cipher import AES
 
 
 class AES_CTR:
+    def __bit_length(self, x):
+        return len(bin(x)[2 : ])
+    
     def __init__(self, key: bytes, nonce: int = secrets.randbits(64), counter: int = 0):
+        assert len(key) == 16, "key must be 16 bytes long."
+        assert 0 <= self.__bit_length(nonce) <= 64, "nonce must be a valid 64 bit integer."
+        assert 0 <= self.__bit_length(counter) <= 64, "counter must be a valid 64 bit integer."
         self.__KEY = key
         self.__NONCE = nonce
         self.__block_counter = counter
@@ -20,8 +26,7 @@ class AES_CTR:
             self.__block_counter += 1
     
     def ctr_transform(self, msg: bytes) -> bytes:
-        keystream = self.__keystream_generator()
-        return self.__xor(msg, keystream)
+        return self.__xor(msg, self.__keystream_generator())
 
     def get_nonce(self) -> int:
         return self.__NONCE
