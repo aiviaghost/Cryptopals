@@ -5,8 +5,10 @@ from Crypto.Cipher import AES
 
 class Encryption_service:
     __BLOCKSIZE = 16
-    __SECRET_KEY = token_bytes(__BLOCKSIZE)
-    __IV = b'\x00' * __BLOCKSIZE
+
+    def __init__(self):
+        self.__SECRET_KEY = token_bytes(self.__BLOCKSIZE)
+        self.__IV = b'\x00' * self.__BLOCKSIZE
 
     def __pad_pkcs7(self, msg: bytes) -> bytes:
         pad = self.__BLOCKSIZE - len(msg) % self.__BLOCKSIZE
@@ -26,7 +28,6 @@ class Encryption_service:
         )
         return enc
 
-    def decrypt(self, enc: bytes) -> dict:
+    def decrypt(self, enc: bytes) -> list:
         msg = self.__unpad_pkcs7(AES.new(self.__SECRET_KEY, AES.MODE_CBC, self.__IV).decrypt(enc))
-        data = [(k, v) for k, v in map(lambda kv: kv.split(b"="), msg.split(b";"))]
-        return data
+        return [(k, v) for k, v in map(lambda kv: kv.split(b"="), msg.split(b";"))]

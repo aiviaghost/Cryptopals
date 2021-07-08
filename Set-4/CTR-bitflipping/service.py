@@ -16,5 +16,4 @@ class Service:
 
     def decrypt(self, enc: bytes) -> list:
         msg = AES_CTR(self.__SECRET_KEY).ctr_transform(enc)
-        data = [(k, v) for k, v in map(lambda kv: kv.split(b"="), msg.split(b";"))]
-        return data
+        return [(k, v) for k, v in map(lambda kv: kv.split(b"="), msg.split(b";"))]
