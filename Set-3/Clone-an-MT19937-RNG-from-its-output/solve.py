@@ -104,11 +104,7 @@ def recover_state(known_output: list) -> list:
         x = unshift(x, u, d, 1)
         return bin_to_int(x)
 
-    recovered = [None] * 624
-    for i, output in enumerate(known_output):
-        recovered[i] = recover(output)
-
-    return recovered
+    return [recover(output) for output in known_output]
 
 RNG = MT19937()
 seen = [RNG.extract_number() for _ in range(624)]
