@@ -3,7 +3,7 @@ def b16ToBytes(s):
 
 
 ciphers = []
-file = open("DetectAESECB.txt", "r") # does not find file for some reason
+file = open("Detect_AES_ECB.txt", "r")
 for line in file:
     ciphers.append(b16ToBytes(line.strip()))
 file.close()
