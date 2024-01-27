@@ -3,11 +3,12 @@ import unittest
 import numpy as np
 
 
-MASK_32 = 2 ** 32 - 1
+# Ignore overflow warnings because it's actually expected behaviour here
+np.seterr(over="ignore")
 
 
 def left_rotate(x, l):
-    return (x << l) | (x >> (32 - l)) & MASK_32
+    return np.uint32((x << l) | (x >> (32 - l)))
 
 
 def chunkify(chunks, width):
@@ -21,7 +22,7 @@ class SHA1:
         0x98BADCFE,
         0x10325476,
         0xC3D2E1F0
-    ])
+    ], dtype=np.uint32)
 
     __leftover_data = b""
     __num_processed_bytes = 0
@@ -36,7 +37,7 @@ class SHA1:
         assert len(
             words) == 16, f"Number of 32 bit words must be 16! {len(words)=}"
 
-        w = words + [0] * 64
+        w = np.array(words + [0] * 64, dtype=np.uint32)
         for i in range(16, 80):
             w[i] = left_rotate(w[i - 3] ^ w[i - 8] ^ w[i - 14] ^ w[i - 16], 1)
 
@@ -45,19 +46,19 @@ class SHA1:
         for i in range(80):
             if 0 <= i <= 19:
                 f = (b & c) | ((~b) & d)
-                k = 0x5A827999
+                k = np.uint32(0x5A827999)
             elif 20 <= i <= 39:
                 f = b ^ c ^ d
-                k = 0x6ED9EBA1
+                k = np.uint32(0x6ED9EBA1)
             elif 40 <= i <= 59:
                 f = (b & c) | (b & d) | (c & d)
-                k = 0x8F1BBCDC
+                k = np.uint32(0x8F1BBCDC)
             else:
                 f = b ^ c ^ d
-                k = 0xCA62C1D6
+                k = np.uint32(0xCA62C1D6)
 
             a, b, c, d, e = (
-                (left_rotate(a, 5) + f + e + k + w[i]) & MASK_32,
+                left_rotate(a, 5) + f + e + k + w[i],
                 a,
                 left_rotate(b, 30),
                 c,
@@ -80,13 +81,11 @@ class SHA1:
 
         for chunk in chunkify(msg, 64):
             self.__num_processed_bytes += len(chunk)
-            self.__h = (
-                self.__h + SHA1.__process_chunk(self.__h, chunk)) & MASK_32
+            self.__h += SHA1.__process_chunk(self.__h, chunk)
 
     def digest(self):
         msg = self.__leftover_data
         msg += b"\x80"
-        print("msg:", msg)
         while len(msg) % 64 != 56:
             msg += b"\x00"
 
@@ -99,7 +98,7 @@ class SHA1:
         h = self.__h.copy()
 
         for chunk in chunkify(msg, 64):
-            h = (h + SHA1.__process_chunk(h, chunk)) & MASK_32
+            h += SHA1.__process_chunk(h, chunk)
 
         h0, h1, h2, h3, h4 = map(int, h)
         hh = (h0 << 128) | (h1 << 96) | (h2 << 64) | (h3 << 32) | h4
