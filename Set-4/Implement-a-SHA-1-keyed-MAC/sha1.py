@@ -18,18 +18,18 @@ def chunkify(chunks, width):
 
 
 class SHA1:
-    __h = np.array([
-        0x67452301,
-        0xEFCDAB89,
-        0x98BADCFE,
-        0x10325476,
-        0xC3D2E1F0
-    ], dtype=np.uint32)
-
-    __leftover_data = b""
-    __num_processed_bytes = 0
 
     def __init__(self, msg=b""):
+        self.__h = np.array([
+            0x67452301,
+            0xEFCDAB89,
+            0x98BADCFE,
+            0x10325476,
+            0xC3D2E1F0
+        ], dtype=np.uint32)
+        self.__leftover_data = b""
+        self.__num_processed_bytes = 0
+
         self.update(msg)
 
     def __process_chunk(h, chunk):
