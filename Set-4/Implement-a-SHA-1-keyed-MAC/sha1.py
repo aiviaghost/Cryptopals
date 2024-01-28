@@ -1,6 +1,8 @@
 import unittest
+from secrets import token_bytes
 
 import numpy as np
+from Crypto.Hash import SHA1 as PYCRYPTODOME_SHA1
 
 
 # Ignore overflow warnings because it's actually expected behaviour here
@@ -72,10 +74,7 @@ class SHA1:
             msg = msg.encode()
 
         msg = self.__leftover_data + msg
-        self.__leftover_data = b""
-
         extra_bytes = len(msg) % 64
-
         self.__leftover_data = msg[-extra_bytes:]
         msg = msg[:-extra_bytes]
 
@@ -129,3 +128,11 @@ class Test_SHA1(unittest.TestCase):
         digest = SHA1(msg).digest().hex()
         target_digest = "de9f2c7fd25e1b3afad3e85a0bd17d9b100db4b3"
         self.assertEqual(digest, target_digest)
+
+    def test_pycryptodome(self):
+        """
+        Test implementation against other "trusted" implementation.
+        """
+        msg = token_bytes(200)
+        self.assertEqual(SHA1(msg).digest(),
+                         PYCRYPTODOME_SHA1.new(msg).digest())
